@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:mapakaon_redo/Utils/tiles_widget.dart';
-import 'package:mapakaon_redo/data/tilesData.dart';
-import '../Utils/colors.dart';
 import 'dart:ui';
-import 'package:mapakaon_redo/Utils/searchbar_Widget.dart';
+import 'package:flutter/material.dart';
+import '../Utils/colors.dart';
+import '../Utils/searchbar_Widget.dart';
+import '../Utils/tiles_widget.dart';
+import '../data/tilesData.dart';
 
 class HomePage extends StatefulWidget {
 
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -179,39 +179,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
 
-      // Bottom Navigation Bar
-      bottomNavigationBar: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
-        ),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 90, sigmaY: 90),
-          child: Container(
-            height: 114,
-            decoration: BoxDecoration(
-              color: const Color.fromRGBO(34, 52, 66, 0.2),
-            ),
-            child: Row(
-              // widget for btmnavigationBar
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(4, (index) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(vertical: 7.5, horizontal: 2),
-                  child: btmnavigationWidget(
-                    btmnavigationTileLabel:
-                        navigationTiles[index].btmnavigationTileLabel,
-                    btmnavigationAssetpath:
-                        index == 0
-                            ? 'assets/svgs/svgNavigation/highlighted/homeHighlight.svg'
-                            : navigationTiles[index].btmnavigationAssetpath,
-                  ),
-                );
-              }),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

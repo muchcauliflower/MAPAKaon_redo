@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mapakaon_redo/Utils/tiles.dart';
 import 'package:mapakaon_redo/pages/history_page.dart';
+import 'package:mapakaon_redo/pages/home_page.dart';
 
-import '../pages/home_page.dart';
+import '../pages/main_screen.dart';
 import '../pages/maps_page.dart';
 import '../pages/settings_page.dart';
 
