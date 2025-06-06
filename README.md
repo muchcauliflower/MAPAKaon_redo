@@ -1,16 +1,19 @@
-# mapakaon_redo
+# Mapakon_v2
 
 Redo for mapakaon
 
-## Getting Started
+Will be for mid evals and potentially final if documentation and version is controlled correctly
 
-This project is a starting point for a Flutter application.
+# MAPAKaon: A Web-Based Application for Local Food Vendors with Transportation Route using Dijkstra's algorithm
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Created By:
+### - Gico, Jules Corvee H.
+### - Ojeda, Kate Denise C.
+### - Papas, Rizal B.
+### - Mhar
+---
+# Documentation 
+---
+## This segment is for documentation purposes. To explain each dart files, its widget and how they work.
+## Also mainly tackle the APIs and also the algorithms
+# -M
