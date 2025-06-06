@@ -13,92 +13,92 @@ class MapsPage extends StatefulWidget {
 }
 
 class _MapsPageState extends State<MapsPage> {
-  late Future<bool> _isOnline;
+  bool _isOnline = false;
+  bool _isLoading = true;
+  bool _assetsReady = false;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    _isOnline = _checkConnectivity();
+    _initializeApp();
   }
 
-  Future<bool> _checkConnectivity() async {
-    final connectivityResult = await Connectivity().checkConnectivity();
+  Future<void> _initializeApp() async {
+    await _checkConnectivity();
+    await _verifyAssets();
+    setState(() => _isLoading = false);
+  }
 
-    // Pinging OpenStreetMap
-    try {
-      final result = await InternetAddress.lookup('tile.openstreetmap.org');
-      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-    } catch (_) {
-      return false;
+  Future<void> _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    bool onlineStatus = false;
+
+    if (connectivityResult != ConnectivityResult.none) {
+      try {
+        final result = await InternetAddress.lookup('tile.openstreetmap.org');
+        onlineStatus = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+      } catch (_) {
+        onlineStatus = false;
+      }
     }
+
+    setState(() => _isOnline = onlineStatus);
+  }
+
+  Future<void> _verifyAssets() async {
+    try {
+      await rootBundle.load('assets/map/tiles/0/0/0.png');
+      setState(() => _assetsReady = true);
+    } catch (e) {
+      debugPrint('Asset verification failed: $e');
+    }
+  }
+
+  Future<void> _refreshConnection() async {
+    setState(() => _isLoading = true);
+    await _checkConnectivity();
+    setState(() => _isLoading = false);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_isOnline ? 'Online: Using OpenStreetMap' : 'Offline: Using local tiles'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FutureBuilder<bool>(
-        future: _isOnline,
-        builder: (context, snapshot){
-          return FloatingActionButton(
-            child: Icon(snapshot.data == true ? Icons.wifi : Icons.wifi_off),
-            // onPressed: () => setState((){
-            //   _isOnline = _checkConnectivity();
-            // }),
-            onPressed: () async{
-              final newStatus = await _checkConnectivity();
-              setState(() {
-                _isOnline = Future.value(newStatus);
-              });
-
-              final message = newStatus ? 'Online U faggot' : "Offline U Gaylord";
-              final messageColor = newStatus ? Colors.black38 : Colors.black54;
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(message),
-                  backgroundColor: messageColor,
-                  behavior: SnackBarBehavior.floating,
-                  duration: const Duration(seconds: 2),
-                  margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                ),
-              );
-            },
-          );
-        }
+      floatingActionButton: FloatingActionButton(
+        child: Icon(_isOnline ? Icons.wifi : Icons.wifi_off),
+        onPressed: _refreshConnection,
       ),
-      body: FutureBuilder(
-          future: _isOnline,
-          builder: (context, snapshot){
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            final isOnline = snapshot.data ?? false;
-            return FlutterMap(
-                options: MapOptions(
-                  center: LatLng(10.7202, 122.5621),
-                  zoom: 13.0
-                ),
-                children: [
-                  _buildTileLayer(isOnline),
-                ]
-            );
-          },
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : FlutterMap(
+        options: MapOptions(
+          center: LatLng(10.7202, 122.5621),
+          zoom: 13.0,
+        ),
+        children: [
+          _buildTileLayer(),
+        ],
       ),
     );
   }
-}
 
-TileLayer _buildTileLayer(bool isOnline) {
-  return TileLayer(
-    tileProvider: isOnline ? NetworkTileProvider() : AssetTileProvider(),
-    urlTemplate: isOnline
-        ? 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        : 'assets/panay_tiles/{z}/{x}/{y}.png',
-    subdomains: isOnline ? ['a', 'b', 'c'] : const [],
-    maxNativeZoom: isOnline ? 19 : 14,
-    minNativeZoom: 0,
-    userAgentPackageName: isOnline ? 'com.example.app' : '',
-    fallbackUrl: isOnline ? null : 'assets/panay_tiles/0/0/0.png',
-  );
+  TileLayer _buildTileLayer() {
+    return TileLayer(
+      tileProvider: _isOnline ? NetworkTileProvider() : AssetTileProvider(),
+      urlTemplate: _isOnline
+          ? 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+          : 'assets/map/tiles/{z}/{x}/{y}.png',
+      subdomains: _isOnline ? ['a', 'b', 'c'] : const [],
+      maxNativeZoom: _isOnline ? 19 : 14,
+      minNativeZoom: 0,
+      backgroundColor: Colors.grey[200],
+      userAgentPackageName: _isOnline ? 'com.example.app' : '',
+    );
+  }
 }

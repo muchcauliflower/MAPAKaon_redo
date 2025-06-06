@@ -42,6 +42,7 @@ dependencies:
   path_provider: ^2.1.2
   sqflite: ^2.3.0
   connectivity_plus: ^6.1.4
+  flutter_geopackage: ^0.6.4+3
 
 
 dev_dependencies:
@@ -100,37 +101,8 @@ flutter:
     # mbtiles
     - assets/mbtiles/panay.mbtiles
 
-    # individual tiles of Panay Map
-    - assets/panay_tiles/
-
     # test
-    - assets/panay_tiles/13/6865/3853.png
-    - assets/panay_tiles/13/6886/3853.png
-    - assets/panay_tiles/13/6884/3850.png
-    - assets/panay_tiles/13/6885/3850.png
-    - assets/panay_tiles/13/6884/3851.png
-    - assets/panay_tiles/13/6885/3851.png
-    - assets/panay_tiles/13/6884/3849.png
-    - assets/panay_tiles/13/6884/3849.png
-    - assets/panay_tiles/13/6883/3850.png
-    - assets/panay_tiles/13/6886/3850.png
-    - assets/panay_tiles/13/6883/3851.png
-    - assets/panay_tiles/13/6886/3851.png
-    - assets/panay_tiles/13/6884/3852.png
-    - assets/panay_tiles/13/6885/3852.png
-    - assets/panay_tiles/13/6883/3849.png
-    - assets/panay_tiles/13/6886/3849.png
-    - assets/panay_tiles/13/6883/3852.png
-    - assets/panay_tiles/13/6886/3852.png
-    - assets/panay_tiles/13/6884/3848.png
-    - assets/panay_tiles/13/6885/3848.png
-    - assets/panay_tiles/13/6884/3853.png
-    - assets/panay_tiles/13/6885/3853.png
-    - assets/panay_tiles/13/6883/3848.png
-    - assets/panay_tiles/13/6886/3848.png
-    - assets/panay_tiles/13/6883/3853.png
-    - assets/panay_tiles/13/6885/3849.png
-
+    - assets/map/panay.gpkg
 
 
   #   - images/a_dot_burr.jpeg
