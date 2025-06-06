@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mapakaon_redo/Utils/tiles.dart';
+import 'package:mapakaon_redo/pages/history_page.dart';
+
+import '../pages/home_page.dart';
+import '../pages/maps_page.dart';
+import '../pages/settings_page.dart';
+
 
 // Declaration of data for foodTiles
 final List<foodTileData> foodTiles = [
@@ -22,8 +28,8 @@ final List<filterTileData> filterTiles = [
 ];
 
 final List<btmnavgiationTilesData> navigationTiles = [
-  btmnavgiationTilesData(btmnavigationTileLabel: "Home", btmnavigationAssetpath: "assets/svgs/svgNavigation/default/homeDefault.svg"),
-  btmnavgiationTilesData(btmnavigationTileLabel: "Maps", btmnavigationAssetpath: "assets/svgs/svgNavigation/default/mapsDefault.svg"),
-  btmnavgiationTilesData(btmnavigationTileLabel: "History", btmnavigationAssetpath: "assets/svgs/svgNavigation/default/historyDefault.svg"),
-  btmnavgiationTilesData(btmnavigationTileLabel: "Settings", btmnavigationAssetpath: "assets/svgs/svgNavigation/default/settingsDefault.svg"),
+  btmnavgiationTilesData(btmnavigationTileLabel: "Home", btmnavigationAssetpath: "assets/svgs/svgNavigation/default/homeDefault.svg", appPage: HomePage()),
+  btmnavgiationTilesData(btmnavigationTileLabel: "Maps", btmnavigationAssetpath: "assets/svgs/svgNavigation/default/mapsDefault.svg", appPage: MapsPage()),
+  btmnavgiationTilesData(btmnavigationTileLabel: "History", btmnavigationAssetpath: "assets/svgs/svgNavigation/default/historyDefault.svg", appPage: SettingsPage()),
+  btmnavgiationTilesData(btmnavigationTileLabel: "Settings", btmnavigationAssetpath: "assets/svgs/svgNavigation/default/settingsDefault.svg", appPage: HistoryPage()),
 ];
