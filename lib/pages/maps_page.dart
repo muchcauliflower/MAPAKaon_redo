@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/services.dart';
 import 'dart:io';
 
 class MapsPage extends StatefulWidget {
@@ -15,90 +14,73 @@ class MapsPage extends StatefulWidget {
 class _MapsPageState extends State<MapsPage> {
   bool _isOnline = false;
   bool _isLoading = true;
-  bool _assetsReady = false;
+  late final MapController _mapController;
 
   @override
   void initState() {
     super.initState();
-    _initializeApp();
-  }
-
-  Future<void> _initializeApp() async {
-    await _checkConnectivity();
-    await _verifyAssets();
-    setState(() => _isLoading = false);
+    _mapController = MapController();
+    _checkConnectivity();
   }
 
   Future<void> _checkConnectivity() async {
     final connectivityResult = await Connectivity().checkConnectivity();
-    bool onlineStatus = false;
-
     if (connectivityResult != ConnectivityResult.none) {
       try {
         final result = await InternetAddress.lookup('tile.openstreetmap.org');
-        onlineStatus = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+        setState(() => _isOnline = result.isNotEmpty);
       } catch (_) {
-        onlineStatus = false;
+        setState(() => _isOnline = false);
       }
+    } else {
+      setState(() => _isOnline = false);
     }
-
-    setState(() => _isOnline = onlineStatus);
-  }
-
-  Future<void> _verifyAssets() async {
-    try {
-      await rootBundle.load('assets/map/tiles/0/0/0.png');
-      setState(() => _assetsReady = true);
-    } catch (e) {
-      debugPrint('Asset verification failed: $e');
-    }
-  }
-
-  Future<void> _refreshConnection() async {
-    setState(() => _isLoading = true);
-    await _checkConnectivity();
     setState(() => _isLoading = false);
+  }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(_isOnline ? 'Online: Using OpenStreetMap' : 'Offline: Using local tiles'),
-        duration: const Duration(seconds: 2),
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(_isOnline ? Icons.wifi : Icons.wifi_off),
+        onPressed: _checkConnectivity,
+      ),
+      body: _isOnline
+          ? FlutterMap(
+        mapController: _mapController,
+        options: MapOptions(
+          center: LatLng(10.7202, 122.5621),
+          zoom: 12.0,
+          minZoom: 10.0,
+          maxZoom: 16.0,
+        ),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            subdomains: ['a', 'b', 'c'],
+          ),
+        ],
+      )
+          : const Center(
+        child: Text(
+          'Offline: Map tiles cannot be loaded.\nPlease connect to the internet.\n\n The developer went through hoops and \ngot depressed from trying to'
+              '\nprovide offline features\n\nmaybe offline features someday hmm',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 16),
+        ),
       ),
     );
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child: Icon(_isOnline ? Icons.wifi : Icons.wifi_off),
-        onPressed: _refreshConnection,
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : FlutterMap(
-        options: MapOptions(
-          center: LatLng(10.7202, 122.5621),
-          zoom: 13.0,
-        ),
-        children: [
-          _buildTileLayer(),
-        ],
-      ),
-    );
-  }
-
-  TileLayer _buildTileLayer() {
-    return TileLayer(
-      tileProvider: _isOnline ? NetworkTileProvider() : AssetTileProvider(),
-      urlTemplate: _isOnline
-          ? 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-          : 'assets/map/tiles/{z}/{x}/{y}.png',
-      subdomains: _isOnline ? ['a', 'b', 'c'] : const [],
-      maxNativeZoom: _isOnline ? 19 : 14,
-      minNativeZoom: 0,
-      backgroundColor: Colors.grey[200],
-      userAgentPackageName: _isOnline ? 'com.example.app' : '',
-    );
+  void dispose() {
+    _mapController.dispose();
+    super.dispose();
   }
 }

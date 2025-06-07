@@ -1,5 +1,5 @@
 name: mapakaon_redo
-description: "Redo for mapakaon"
+description: Redo for mapakaon"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -42,14 +42,13 @@ dependencies:
   path_provider: ^2.1.2
   sqflite: ^2.3.0
   connectivity_plus: ^6.1.4
-  flutter_geopackage: ^0.6.4+3
-
+  flutter_map_mbtiles: ^1.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
+  # The flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
@@ -98,25 +97,28 @@ flutter:
     - assets/svgs/svgNavigation/highlighted/historyHighlight.svg
     - assets/svgs/svgNavigation/highlighted/settingsHighlight.svg
 
-    # mbtiles
-    - assets/mbtiles/panay.mbtiles
 
-    # test
-    - assets/map/panay.gpkg
+    # 404
+    - assets/404.jpeg
+
+
+    # tiles
+    - assets/map/iloilo.mbtiles
+
 
 
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
-  # An image asset can refer to one or more resolution-specific "variants", see
+  # An image asset can refer to one or more resolution-specific variants", see
   # https://flutter.dev/to/resolution-aware-images
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/to/asset-from-package
 
   # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
+  # in this flutter" section. Each entry in this list should have a
+  # family" key with the font family name, and a fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
