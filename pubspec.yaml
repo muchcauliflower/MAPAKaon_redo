@@ -98,13 +98,6 @@ flutter:
     - assets/svgs/svgNavigation/highlighted/settingsHighlight.svg
 
 
-    # 404
-    - assets/404.jpeg
-
-
-    # tiles
-    - assets/map/iloilo.mbtiles
-
 
 
   #   - images/a_dot_burr.jpeg

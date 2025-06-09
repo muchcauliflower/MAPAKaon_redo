@@ -69,8 +69,7 @@ class _MapsPageState extends State<MapsPage> {
       )
           : const Center(
         child: Text(
-          'Offline: Map tiles cannot be loaded.\nPlease connect to the internet.\n\n The developer went through hoops and \ngot depressed from trying to'
-              '\nprovide offline features\n\nmaybe offline features someday hmm',
+          'Offline: Map tiles cannot be loaded.\nPlease connect to the internet.',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 16),
         ),
