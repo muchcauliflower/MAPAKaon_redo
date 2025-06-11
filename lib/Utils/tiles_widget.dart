@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:mapakaon_redo/Utils/screenDimensions.dart';
 import 'colors.dart';
 
+
+// Building the food tiles
 class foodtileWidget extends StatelessWidget {
   final String labelfoodTile;
   final String foodTilesvgPath;
@@ -11,12 +14,12 @@ class foodtileWidget extends StatelessWidget {
     required this.foodTilesvgPath,
     Key? key,
   }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
     return Container(
-      height: 104,
-      width: 87,
+      height: SizeConfig.screenHeight * 0.105,
+      width: SizeConfig.screenWidth * 0.2,
       decoration: BoxDecoration(
         color: secondaryBgColor,
         borderRadius: BorderRadius.circular(20),
@@ -24,13 +27,13 @@ class foodtileWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SvgPicture.asset(foodTilesvgPath, height: 40, width: 40),
-          SizedBox(height: 8),
+          SvgPicture.asset(foodTilesvgPath, height: SizeConfig.screenHeight * 0.05, width: SizeConfig.screenHeight * 0.05),
+          SizedBox(height: SizeConfig.screenHeight * 0.004),
           Text(
             labelfoodTile,
             style: TextStyle(
               fontFamily: 'FredokaOne',
-              fontSize: 12,
+              fontSize: SizeConfig.screenWidth * 0.0275,
               color: Color(0xFF5B5B5B),
             ),
           ),
@@ -56,9 +59,10 @@ class filtertileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
     return Container(
-      height: 104,
-      width: 188,
+      height: SizeConfig.screenHeight * 0.115,
+      width: SizeConfig.screenWidth * 0.45,
       decoration: BoxDecoration(
         color: tileColor,
         borderRadius: BorderRadius.circular(20),
@@ -67,7 +71,7 @@ class filtertileWidget extends StatelessWidget {
         children: [
           // Texts with padding
           Padding(
-            padding: const EdgeInsets.only(left: 12, right: 80),
+            padding: EdgeInsets.only(left: SizeConfig.screenWidth * 0.025, right: SizeConfig.screenWidth * 0.2),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Column(
@@ -77,19 +81,19 @@ class filtertileWidget extends StatelessWidget {
                   Text(
                     filterLabel,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'FredokaOne',
-                      fontSize: 15,
+                      fontSize: SizeConfig.screenWidth * 0.04,
                       color: Colors.black,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: SizeConfig.screenHeight * 0.0065),
                   Text(
                     filterSublabel,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'FredokaOne',
-                      fontSize: 9,
+                      fontSize: SizeConfig.screenWidth * 0.025,
                       color: Colors.black,
                     ),
                   ),
@@ -102,7 +106,7 @@ class filtertileWidget extends StatelessWidget {
           Positioned(
             bottom: -20,
             right: -20,
-            child: SvgPicture.asset(filterTilesvgPath, height: 100, width: 100),
+            child: SvgPicture.asset(filterTilesvgPath, height: SizeConfig.screenHeight * 0.125, width: SizeConfig.screenWidth * 0.125),
           ),
         ],
       ),
@@ -110,6 +114,7 @@ class filtertileWidget extends StatelessWidget {
   }
 }
 
+// UNUSED AT THE MOMENT, MIGHT/WILL REMOVE IN THE FUTURE
 class btmnavigationWidget extends StatelessWidget {
   final String btmnavigationTileLabel;
   final String btmnavigationAssetpath;
@@ -126,7 +131,7 @@ class btmnavigationWidget extends StatelessWidget {
       children: [
         SvgPicture.asset(
             btmnavigationAssetpath,
-            height: 60,
+            height: SizeConfig.screenWidth * 4,
             width: 60,
         ),
 

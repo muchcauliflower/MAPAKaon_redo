@@ -1,6 +1,6 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../Utils/colors.dart';
+import '../Utils/screenDimensions.dart';
 import '../Utils/searchbar_Widget.dart';
 import '../Utils/tiles_widget.dart';
 import '../data/tilesData.dart';
@@ -19,6 +19,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
+
     return Scaffold(
       backgroundColor: bgColor,
       body: SingleChildScrollView(
@@ -31,7 +33,10 @@ class _HomePageState extends State<HomePage> {
 
             Container(
               child: Padding(
-                padding: const EdgeInsets.only(top: 100, left: 24, right: 24),
+                padding: EdgeInsets.only(
+                    top: SizeConfig.screenHeight * 0.1,
+                    left: SizeConfig.screenWidth * 0.06,
+                    right: SizeConfig.screenWidth * 0.06),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -40,16 +45,16 @@ class _HomePageState extends State<HomePage> {
                       "Mayong Hapon!",
                       style: TextStyle(
                         fontFamily: 'FredokaOne',
-                        fontSize: 34,
+                        fontSize: SizeConfig.screenWidth * 0.08,
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    SizedBox(height: SizeConfig.screenWidth * 0.004),
                     Text(
                       "Insert Slogan here...? (Idk you pick)",
                       style: TextStyle(
                         fontFamily: 'FredokaOne',
-                        fontSize: 16,
+                        fontSize: SizeConfig.screenWidth * 0.04,
                         color: appColor,
                       ),
                     ),
@@ -58,7 +63,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Container(
-              height: 248,
+              height: SizeConfig.screenHeight * 0.248,
 
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -75,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   // Padding inbetween
-                  SizedBox(height: 20),
+                  SizedBox(height: SizeConfig.screenHeight * 0.02),
 
                   // Lower Row
                   Row(
@@ -94,10 +99,10 @@ class _HomePageState extends State<HomePage> {
             // Mid Portion. Will hold container with only 3 tiles: Near me, Trending,
             // Iloilo Famous. Similar to  Top portion with rows and columns
             Container(
-              height: 228,
+              height: SizeConfig.screenHeight * 0.275,
               child: Padding(
-                padding: const EdgeInsets.only(top: 7.5, left: 2, right: 2),
-                // padding: const EdgeInsets.all(2.0),
+                padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.025, left: SizeConfig.screenWidth * 0.02, right: SizeConfig.screenWidth * 0.02),
+
                 child: Column(
                   children: [
                     Row(
@@ -111,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                         );
                       }),
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(height: SizeConfig.screenHeight * 0.01,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: List.generate(2, (index) {
@@ -131,39 +136,39 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 5, left: 15, right: 15),
+                  padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.015, left: SizeConfig.screenWidth * 0.06, right: SizeConfig.screenWidth * 0.015),
                   child: Text(
                     "Special Offers",
                     style: TextStyle(
                       fontFamily: 'FredokaOne',
-                      fontSize: 27.5,
+                      fontSize: SizeConfig.screenWidth * 0.075,
                       color: Colors.white,
                     ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 2.5, left: 15, right: 15),
+                  padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.0075, left: SizeConfig.screenWidth * 0.06, right: SizeConfig.screenWidth * 0.015),
                   child: Text(
                     "Insert Slogan here..? (Idk you pick?)",
                     style: TextStyle(
                       fontFamily: 'FredokaOne',
-                      fontSize: 16,
+                      fontSize: SizeConfig.screenWidth * 0.04,
                       color: appColor,
                     ),
                   ),
                 ),
 
                 Container(
-                  height: 200,
+                  height: SizeConfig.screenHeight * 0.2,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: List.generate(3, (index) {
                         return Padding(
-                          padding: const EdgeInsets.all(15.0),
+                          padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.01, left: SizeConfig.screenWidth * 0.06),
                           child: Container(
-                            width: 300,
-                            height: 200,
+                            width: SizeConfig.screenHeight * 0.3,
+                            height: SizeConfig.screenHeight * 0.2,
                             decoration: BoxDecoration(
                               color: Colors.greenAccent,
                               borderRadius: BorderRadius.circular(30),

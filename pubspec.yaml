@@ -43,6 +43,10 @@ dependencies:
   sqflite: ^2.3.0
   connectivity_plus: ^6.1.4
   flutter_map_mbtiles: ^1.0.0
+  flutter_polyline_points: ^2.1.0
+
+  # http
+  http: ^1.4.0
 
 dev_dependencies:
   flutter_test:

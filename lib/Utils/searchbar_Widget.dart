@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mapakaon_redo/Utils/colors.dart';
+import 'package:mapakaon_redo/Utils/screenDimensions.dart';
 
 class searchbarWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -8,22 +9,23 @@ class searchbarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 15),
+      padding: EdgeInsets.symmetric(vertical: SizeConfig.screenHeight * 0.005),
       child: Container(
-        height: 50,
+        height: SizeConfig.screenHeight * 0.05,
         decoration: BoxDecoration(
           color: secondaryBgColor,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Padding(
-          padding: const EdgeInsets.only(top: 1),
+          padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.01),
           child: TextField(
             controller: controller,
             style: TextStyle(color: Color(0xFF5B5B5B)),
             decoration: InputDecoration(
               hintText: 'Search...',
-              hintStyle: TextStyle(color: Color(0xFF5B5B5B), fontSize: 20),
+              hintStyle: TextStyle(color: Color(0xFF5B5B5B), fontSize: SizeConfig.screenWidth * 0.05),
               prefixIcon: Icon(Icons.search, color: Color(0xFF5B5B5B)),
               border: InputBorder.none,
             ),
