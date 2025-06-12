@@ -1,6 +1,105 @@
 # Documentation for maps_page
+
 ## This is created to make each part understandable
 ## I should really review and learn the Flutter/C++ syntax -M
+---
+
+Things i'll focus on in segments
+1) Flutter built-in classes/functions and syntax
+2) Imported libraries
+3) How everything works together
+
+---
+
+# 1. Flutter built-in classes/functions and syntax
+## Parts of the code i dont understand in terms of the flutter/c++ language
+```
+@override
+
+State<MapsPage> createState() => _MapsPageState();
+
+late final MapController _mapController;
+
+void initState(){}
+
+Future<void> _fetchRoute() async
+
+try catch(e)
 
 
+void dispose(){}
 
+super.dispose();
+```
+
+### 1. @override:
+basically inheritance. i simply forgot that the state class itself doesnt contain anything youre only inheriting its methods and functions.
+
+==Simply, MapsPage extends StatefulWidget:=
+- Stateful widget has a method called State
+- Mapspage is taking it so it can use it
+
+### 3. late and final
+- Later: i have a variable that will be declared later
+- Final: immutable, unable to change once declared, so if declaring a name with final, youre unable to change its name again after the first declaration
+
+### 4. void initState(){}
+- Simply just the name of the initState() function
+
+
+# ==5. Future, await, async IMPORTANT==
+## This part is most important as majority of the things are quite dynamic. These are imperative for live, dynamic apps
+
+# Future:  ``` Future<T> or Future<void> ```
+
+# A Future In Dart represents a potential value or error that will be available at some time in the FUTURE. Usually used for asynchronous operations
+
+eg.
+```
+Future<String> getData() {
+  return Future.delayed(Duration(seconds: 2), () => "Data loaded");
+}
+
+Future<void> fetch() async {
+  print("Start");
+  String result = await getData();  // ⏳ Pauses here
+  print(result);                    // ✅ Prints "Data loaded" after 2 seconds
+}
+```
+
+layman terms
+
+A `Future` is a task that isn't finished yet.
+`await` lets you pause and wait for that task to finish.
+`async` gives your function the **power to pause and resume**, like a multitasker who knows how to wait and continue later.
+
+### 6. Try catch (e)
+- bascially just the error message so its possible to print the errors and whatnot
+
+### 7. Dispose()
+- For cleaning purposes. Clean up reosurces and data declarations
+
+notes:
+> ✅ “To remove all declared data and variables…”
+> 🔁 …**that need manual cleanup** (like controllers, streams, listeners)
+
+> ✅ “…so they can be declared again without issues…”
+> 🔁 …yes! Without disposing, you could get **duplicate listeners, memory leaks**, or even app crashes.
+
+---
+# 2. Imported Libraries
+## This part consists of the imported libraries and what they offer. main the functions/methods they hold.
+### There are more or less 4 libraries as of making this
+- Flutter_map
+- http
+- latlong
+- polyline
+
+### this will just be summed up more or less i wont segregate
+
+```
+_mapController
+Uri.parse()
+json.decode
+
+```
