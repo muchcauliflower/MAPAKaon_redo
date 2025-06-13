@@ -23,6 +23,7 @@ class _MapsPageState extends State<MapsPage> {
   List<LatLng> clickedPoints = [];
   bool isAddingMarkers = false;
 
+
   static const _apiKey = '5b3ce3597851110001cf624890ba4a979c437083c56f01de8ce2eda60ad65a23dabfcf48f2cec3bd'; // Replace with your real OpenRouteService API key
 
   @override
@@ -30,6 +31,10 @@ class _MapsPageState extends State<MapsPage> {
     super.initState();
     _mapController = MapController();
     _loadDefaultRoutesFromAssets();
+
+    if (!debugMode){
+      isAddingMarkers = true;
+    }
   }
 
   Future<void> _loadDefaultRoutesFromAssets() async {
@@ -45,6 +50,41 @@ class _MapsPageState extends State<MapsPage> {
     setState(() {
       storedRoutes.addAll(defaultRoutes);
     });
+  }
+
+  void _showSavedRoutesDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Saved Routes'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: storedRoutes.length,
+            itemBuilder: (context, index) {
+              final route = storedRoutes[index];
+              return ListTile(
+                title: Text(route.routeName),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    clickedPoints = List<LatLng>.from(route.coordinates);
+                  });
+                  _fetchRouteSegments();
+                },
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          )
+        ],
+      ),
+    );
   }
 
   Future<void> _loadStoredRoutes() async {
@@ -130,14 +170,21 @@ class _MapsPageState extends State<MapsPage> {
     if (!isAddingMarkers) return;
 
     setState(() {
-      clickedPoints.add(point);
+      if (debugMode) {
+        clickedPoints.add(point);
+      } else {
+        // User mode: allow only 2 points
+        if (clickedPoints.length >= 2) {
+          clickedPoints.clear();
+        }
+        clickedPoints.add(point);  // Add only once
+      }
     });
 
     _fetchRouteSegments();
 
     debugPrint('Stored clicked points:');
     for (final p in clickedPoints) {
-      //turn it into {"latitude": 10.754748456731317, "longitude": 122.5382258865588},
       print('{\"latitude\": ${p.latitude}, \"longitude\": ${p.longitude}},');
     }
   }
@@ -183,8 +230,9 @@ class _MapsPageState extends State<MapsPage> {
         isAddingMarkers: isAddingMarkers,
         onToggleAdd: _toggleAddingMarkers,
         onClear: _clearAll,
+        debugMode: debugMode,
         onSaveRoute: _saveCurrentRoute,
-        onOpenRoutes: _showRoutePicker,
+        onShowRoutes: _showSavedRoutesDialog,
       ),
       body: FlutterMap(
         mapController: _mapController,

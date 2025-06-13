@@ -1,61 +1,70 @@
 import 'package:flutter/material.dart';
 
+const bool debugMode = true;
+
 PreferredSizeWidget buildMapAppBar({
   required BuildContext context,
   required bool isAddingMarkers,
   required VoidCallback onToggleAdd,
   required VoidCallback onClear,
-  required void Function(String) onSaveRoute,
-  required VoidCallback onOpenRoutes, // <- this must be here
+  required bool debugMode,
+  VoidCallback? onShowRoutes,
+  void Function(String)? onSaveRoute,
 }) {
   return AppBar(
     title: const Text('Interactive Map Routes'),
     actions: [
       IconButton(
-        icon: Icon(isAddingMarkers ? Icons.cancel : Icons.add_location_alt),
-        tooltip: isAddingMarkers ? 'Cancel Adding Markers' : 'Add Markers',
+        icon: Icon(isAddingMarkers ? Icons.edit_off : Icons.add_location_alt),
         onPressed: onToggleAdd,
+        tooltip: isAddingMarkers ? 'Stop Adding' : 'Add Marker',
       ),
       IconButton(
-        icon: const Icon(Icons.clear_all),
-        tooltip: 'Clear All Points',
+        icon: const Icon(Icons.clear),
         onPressed: onClear,
+        tooltip: 'Clear Points',
       ),
-      IconButton(
-        icon: const Icon(Icons.folder_open),
-        tooltip: 'View Saved Routes',
-        onPressed: onOpenRoutes, // <-- SHOW DIALOG
-      ),
-      IconButton(
-        icon: const Icon(Icons.save),
-        tooltip: 'Save Current Route',
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              String routeName = '';
-              return AlertDialog(
-                title: const Text('Name this route'),
-                content: TextField(
-                  onChanged: (value) => routeName = value,
-                  decoration: const InputDecoration(hintText: 'Enter route name'),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      if (routeName.isNotEmpty) {
-                        onSaveRoute(routeName);
-                      }
-                    },
-                    child: const Text('Save'),
+      if (debugMode && onSaveRoute != null)
+        IconButton(
+          icon: const Icon(Icons.save),
+          tooltip: 'Save Route',
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                String routeName = '';
+                return AlertDialog(
+                  title: const Text('Save Route'),
+                  content: TextField(
+                    onChanged: (value) => routeName = value,
+                    decoration: const InputDecoration(hintText: 'Route name'),
                   ),
-                ],
-              );
-            },
-          );
-        },
-      ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        if (routeName.isNotEmpty) {
+                          onSaveRoute(routeName);
+                        }
+                      },
+                      child: const Text('Save'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
+      if (debugMode && onShowRoutes != null)
+        IconButton(
+          icon: const Icon(Icons.list),
+          tooltip: 'Show Saved Routes',
+          onPressed: onShowRoutes,
+        ),
     ],
   );
 }
