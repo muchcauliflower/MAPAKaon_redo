@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const bool debugMode = true;
+const bool debugMode = false; // debug mode
 
 PreferredSizeWidget buildMapAppBar({
   required BuildContext context,

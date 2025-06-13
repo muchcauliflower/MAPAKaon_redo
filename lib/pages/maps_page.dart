@@ -10,6 +10,8 @@ import '../Utils/map_page_utils/route_file_utils.dart';
 import '../Utils/map_page_utils/route_picker_dialog.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
+import '../Utils/map_page_utils/step_by_step_route.dart';
+
 class MapsPage extends StatefulWidget {
   const MapsPage({super.key});
 
@@ -22,9 +24,10 @@ class _MapsPageState extends State<MapsPage> {
   List<List<LatLng>> _routeSegments = [];
   List<LatLng> clickedPoints = [];
   bool isAddingMarkers = false;
+  List<LatLng> currentRoutePolyline = [];
 
 
-  static const _apiKey = '5b3ce3597851110001cf624890ba4a979c437083c56f01de8ce2eda60ad65a23dabfcf48f2cec3bd'; // Replace with your real OpenRouteService API key
+  static const _apiKey = '5b3ce3597851110001cf624890ba4a979c437083c56f01de8ce2eda60ad65a23dabfcf48f2cec3bd'; // Replace with your real ORS API key
 
   @override
   void initState() {
@@ -32,84 +35,26 @@ class _MapsPageState extends State<MapsPage> {
     _mapController = MapController();
     _loadDefaultRoutesFromAssets();
 
-    if (!debugMode){
+    if (!debugMode) {
       isAddingMarkers = true;
     }
   }
 
-  Future<void> _loadDefaultRoutesFromAssets() async {
-    final String jsonString =
-    await rootBundle.loadString('assets/routes/default_routes.json');
-
-    final List<dynamic> jsonData = json.decode(jsonString);
-
-    final defaultRoutes = jsonData
-        .map((route) => StoredRoute.fromJson(route))
-        .toList();
-
-    setState(() {
-      storedRoutes.addAll(defaultRoutes);
-    });
-  }
-
-  void _showSavedRoutesDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Saved Routes'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: storedRoutes.length,
-            itemBuilder: (context, index) {
-              final route = storedRoutes[index];
-              return ListTile(
-                title: Text(route.routeName),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  setState(() {
-                    clickedPoints = List<LatLng>.from(route.coordinates);
-                  });
-                  _fetchRouteSegments();
-                },
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          )
-        ],
-      ),
-    );
-  }
-
-  Future<void> _loadStoredRoutes() async {
-    final loadedRoutes = await loadRoutesFromFile();
-    setState(() {
-      storedRoutes = loadedRoutes;
-    });
-  }
-
-  Future<void> _saveCurrentRoute(String name) async {
-    if (clickedPoints.isEmpty) return;
-
-    final newRoute = StoredRoute(
-      routeName: name,
-      coordinates: List<LatLng>.from(clickedPoints),
+  Future<void> generateStepByStepRoute(LatLng start, LatLng end) async {
+    final stepBuilder = StepByStepRoute(
+      start: start,
+      end: end,
+      jeepneyRoutes: storedRoutes, // make sure this is your list of jeepney routes
     );
 
-    setState(() {
-      storedRoutes.add(newRoute);
-      clickedPoints.clear();
-      _routeSegments.clear();
-    });
-
-    await saveRoutesToFile(storedRoutes);
-    debugPrint('Saved route "$name" with ${newRoute.coordinates.length} points.');
+    try {
+      final path = await stepBuilder.computeStepByStepPath();
+      setState(() {
+        _routeSegments = [path];
+      });
+    } catch (e) {
+      debugPrint('Step-by-step route error: $e');
+    }
   }
 
   Future<void> _fetchRouteSegments() async {
@@ -127,7 +72,7 @@ class _MapsPageState extends State<MapsPage> {
       final body = {
         "coordinates": [
           [start.longitude, start.latitude],
-          [end.longitude, end.latitude]
+          [end.longitude, end.latitude],
         ],
       };
 
@@ -166,28 +111,128 @@ class _MapsPageState extends State<MapsPage> {
     });
   }
 
-  void _handleMapTap(LatLng point) {
+  Future<void> _loadDefaultRoutesFromAssets() async {
+    final String jsonString = await rootBundle.loadString('assets/routes/default_routes.json');
+    final List<dynamic> jsonData = json.decode(jsonString);
+    final defaultRoutes = jsonData.map((route) => StoredRoute.fromJson(route)).toList();
+
+    setState(() {
+      storedRoutes.addAll(defaultRoutes);
+    });
+  }
+
+  void _showSavedRoutesDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Saved Routes'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: storedRoutes.length,
+            itemBuilder: (context, index) {
+              final route = storedRoutes[index];
+              return ListTile(
+                title: Text(route.routeName),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    clickedPoints = List<LatLng>.from(route.coordinates);
+                  });
+                  _fetchRouteSegments();
+                },
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _loadStoredRoutes() async {
+    final loadedRoutes = await loadRoutesFromFile();
+    setState(() {
+      storedRoutes = loadedRoutes;
+    });
+  }
+
+  Future<void> _saveCurrentRoute(String name) async {
+    if (clickedPoints.isEmpty) return;
+
+    final newRoute = StoredRoute(
+      routeName: name,
+      coordinates: List<LatLng>.from(clickedPoints),
+    );
+
+    setState(() {
+      storedRoutes.add(newRoute);
+      clickedPoints.clear();
+      _routeSegments.clear();
+    });
+
+    await saveRoutesToFile(storedRoutes);
+    debugPrint('Saved route "$name" with ${newRoute.coordinates.length} points.');
+  }
+
+  void _printCurrentRoute(String routeName) {
+    final allPoints = _routeSegments.expand((s) => s).toList();
+    print('{\n  "routeName": "$routeName",\n  "coordinates": [');
+
+    for (int i = 0; i < allPoints.length; i++) {
+      final p = allPoints[i];
+      final comma = i == allPoints.length - 1 ? '' : ',';
+      print('    {"latitude": ${p.latitude}, "longitude": ${p.longitude}}$comma');
+    }
+
+    print('  ]\n},');
+  }
+
+  void _handleMapTap(LatLng point) async {
     if (!isAddingMarkers) return;
 
     setState(() {
       if (debugMode) {
         clickedPoints.add(point);
       } else {
-        // User mode: allow only 2 points
-        if (clickedPoints.length >= 2) {
-          clickedPoints.clear();
+        if (clickedPoints.length == 2) {
+          clickedPoints.clear(); // Clear first to avoid more than 2
         }
-        clickedPoints.add(point);  // Add only once
+        clickedPoints.add(point);
       }
     });
 
-    _fetchRouteSegments();
-
     debugPrint('Stored clicked points:');
     for (final p in clickedPoints) {
-      print('{\"latitude\": ${p.latitude}, \"longitude\": ${p.longitude}},');
+      print('{"latitude": ${p.latitude}, "longitude": ${p.longitude}},');
+    }
+
+    if (!debugMode && clickedPoints.length == 2) {
+      final stepper = StepByStepRoute(
+        start: clickedPoints[0],
+        end: clickedPoints[1],
+        jeepneyRoutes: storedRoutes,
+      );
+
+      try {
+        final stepPath = await stepper.computeStepByStepPath();
+        debugPrint('✅ Step-by-step path has ${stepPath.length} points');
+
+        setState(() {
+          currentRoutePolyline = stepPath;
+        });
+      } catch (e) {
+        debugPrint('❌ Failed to compute step-by-step route: $e');
+      }
     }
   }
+
 
   void _toggleAddingMarkers() {
     setState(() {
@@ -247,27 +292,23 @@ class _MapsPageState extends State<MapsPage> {
             subdomains: ['a', 'b', 'c'],
           ),
           PolylineLayer(
-            polylines: List.generate(
-              _routeSegments.length,
-                  (index) => Polyline(
-                points: _routeSegments[index],
-                strokeWidth: 5.0,
+            polylines: [
+              Polyline(
+                points: currentRoutePolyline,
+                strokeWidth: 4.0,
                 color: Colors.blueAccent,
               ),
-            ),
+            ],
           ),
           MarkerLayer(
-            markers: clickedPoints.map((point) {
-              return Marker(
+            markers: clickedPoints.map(
+                  (point) => Marker(
                 point: point,
                 width: 40,
                 height: 40,
-                child: const Icon(
-                  Icons.location_on,
-                  color: Colors.red,
-                ),
-              );
-            }).toList(),
+                child: const Icon(Icons.location_on, color: Colors.red),
+              ),
+            ).toList(),
           ),
         ],
       ),
