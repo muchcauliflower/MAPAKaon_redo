@@ -6,7 +6,9 @@ import 'dart:convert';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import '../Utils/map_page_utils/RouteStorage.dart';
 import '../Utils/map_page_utils/map_page_widgets.dart';
+import '../Utils/map_page_utils/route_file_utils.dart';
 import '../Utils/map_page_utils/route_picker_dialog.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class MapsPage extends StatefulWidget {
   const MapsPage({super.key});
@@ -27,9 +29,32 @@ class _MapsPageState extends State<MapsPage> {
   void initState() {
     super.initState();
     _mapController = MapController();
+    _loadDefaultRoutesFromAssets();
   }
 
-  void _saveCurrentRoute(String name) {
+  Future<void> _loadDefaultRoutesFromAssets() async {
+    final String jsonString =
+    await rootBundle.loadString('assets/routes/default_routes.json');
+
+    final List<dynamic> jsonData = json.decode(jsonString);
+
+    final defaultRoutes = jsonData
+        .map((route) => StoredRoute.fromJson(route))
+        .toList();
+
+    setState(() {
+      storedRoutes.addAll(defaultRoutes);
+    });
+  }
+
+  Future<void> _loadStoredRoutes() async {
+    final loadedRoutes = await loadRoutesFromFile();
+    setState(() {
+      storedRoutes = loadedRoutes;
+    });
+  }
+
+  Future<void> _saveCurrentRoute(String name) async {
     if (clickedPoints.isEmpty) return;
 
     final newRoute = StoredRoute(
@@ -43,6 +68,7 @@ class _MapsPageState extends State<MapsPage> {
       _routeSegments.clear();
     });
 
+    await saveRoutesToFile(storedRoutes);
     debugPrint('Saved route "$name" with ${newRoute.coordinates.length} points.');
   }
 
@@ -54,6 +80,8 @@ class _MapsPageState extends State<MapsPage> {
     for (int i = 0; i < clickedPoints.length - 1; i++) {
       final start = clickedPoints[i];
       final end = clickedPoints[i + 1];
+
+      await Future.delayed(const Duration(milliseconds: 600));
 
       final url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car/json');
       final body = {
@@ -109,7 +137,8 @@ class _MapsPageState extends State<MapsPage> {
 
     debugPrint('Stored clicked points:');
     for (final p in clickedPoints) {
-      debugPrint('Lat: ${p.latitude}, Lng: ${p.longitude}');
+      //turn it into {"latitude": 10.754748456731317, "longitude": 122.5382258865588},
+      print('{\"latitude\": ${p.latitude}, \"longitude\": ${p.longitude}},');
     }
   }
 
@@ -166,7 +195,7 @@ class _MapsPageState extends State<MapsPage> {
         ),
         children: [
           TileLayer(
-            urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             subdomains: ['a', 'b', 'c'],
           ),
           PolylineLayer(

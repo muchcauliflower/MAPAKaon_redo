@@ -101,6 +101,8 @@ flutter:
     - assets/svgs/svgNavigation/highlighted/historyHighlight.svg
     - assets/svgs/svgNavigation/highlighted/settingsHighlight.svg
 
+    # test json
+    - assets/routes/default_routes.json
 
 
 
