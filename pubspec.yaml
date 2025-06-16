@@ -103,6 +103,7 @@ flutter:
 
     # test json
     - assets/routes/default_routes.json
+    - assets/routes/transfer_spots.json
 
 
 

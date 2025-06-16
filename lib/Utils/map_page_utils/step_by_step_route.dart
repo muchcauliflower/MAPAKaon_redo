@@ -6,7 +6,7 @@ class StepByStepRoute {
   final LatLng start;
   final LatLng end;
   final List<StoredRoute> jeepneyRoutes;
-  final double maxWalkingDistance = 250.0; // meters
+  final double maxWalkingDistance = 300.0; // meters
 
   StepByStepRoute({
     required this.start,
